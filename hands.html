@@ -298,6 +298,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               scene.addNode(box.node);
               let joint = inputSource.hand.get(box.jointName);
               let jointPose = frame.getJointPose(joint, refSpace);
+              if (!jointPose) { continue; }
               let jointRadius = jointPose.radius;
               let matrix = jointPose.transform.matrix;
               i++;
