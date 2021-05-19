@@ -294,7 +294,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
             for (const box of boxes[inputSource.handedness]) {
               scene.addNode(box.node);
-              continue;
               let matrix = positions.slice(offset, offset + 16);
               offset += 16;
               let jointRadius = radii[box.offset];
