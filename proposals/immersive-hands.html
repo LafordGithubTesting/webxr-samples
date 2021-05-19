@@ -285,10 +285,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               console.log("no pose");
             }
 
-            if (!frame.fillJointRadii(inputSource.hand.values(), radii)) {
-              console.log("no fillJointRadii");
-              continue;
-            }
+            //if (!frame.fillJointRadii(inputSource.hand.values(), radii)) {
+//              console.log("no fillJointRadii");
+//              continue;
+//            }
             if (!frame.fillPoses(inputSource.hand.values(), refSpace, positions)) {
               console.log("no fillPoses");
               continue;
