@@ -72,7 +72,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let boxes_left = [];
       let boxes_right = [];
       let boxes = { left: boxes_left, right: boxes_right };
-      let interactionBoxes = {left: null, right: null};
+      let indexFingerBoxes = {left: null, right: null};
       let isAR = false;
       const numJoints = 25;
       let radii = new Float32Array(numJoints);
@@ -145,11 +145,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         for (const box of boxes_right) {
           scene.removeNode(box.node);
         }
-        if (interactionBoxes.left) {
-          scene.removeNode(interactionBoxes.left);
+        if (indexFingerBoxes.left) {
+          scene.removeNode(indexFingerBoxes.left);
         }
-        if (interactionBoxes.right) {
-          scene.removeNode(interactionBoxes.right);
+        if (indexFingerBoxes.right) {
+          scene.removeNode(indexFingerBoxes.right);
         }
         boxes_left = [];
         boxes_right = [];
@@ -164,7 +164,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
         }
 
-        interactionBoxes = {
+        indexFingerBoxes = {
           left: addBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b, jointNames.indexOf('index-finger-tip')),
           right: addBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b, jointNames.indexOf('index-finger-tip'))
         };
@@ -253,7 +253,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         interactionBox = createBoxPrimitive(defaultBoxColor);
         interactionBox.translation = [0, 0, -1];
         interactionBox.scale = [0.5, 0.5, 0.5];
-        scene.addNode(interactionBox);
+        scene.addNode(interactionBox.node);
 
         // This and all future samples that visualize controllers will use this
         // convenience method to listen for changes to the active XRInputSources
@@ -312,15 +312,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
 
             // Render a special box for each index finger on each hand
-            const interactionBox = interactionBoxes[inputSource.handedness];
-            scene.addNode(interactionBox.node);
+            const indexFingerBox = indexFingerBoxes[inputSource.handedness];
+            scene.addNode(indexFingerBox.node);
             let joint = inputSource.hand.get('index-finger-tip');
             let jointPose = frame.getJointPose(joint, refSpace);
             if (jointPose) {
               let matrix = jointPose.transform.matrix;
-              mat4.getTranslation(interactionBox.node.translation, matrix);
-              mat4.getRotation(interactionBox.node.rotation, matrix);
-              interactionBox.node.scale = [0.02, 0.02, 0.02];
+              mat4.getTranslation(indexFingerBox.node.translation, matrix);
+              mat4.getRotation(indexFingerBox.node.rotation, matrix);
+              indexFingerBox.node.scale = [0.02, 0.02, 0.02];
             }
           }
         }
@@ -340,19 +340,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         updateInputSources(session, frame, refSpace);
 
-        function Distance(nodeA, nodeB) {
+        function Distance(boxA, boxB) {
           return Math.sqrt(
-            Math.pow(nodeA.translation[0] - nodeB.translation[0], 2),
-            Math.pow(nodeA.translation[1] - nodeB.translation[1], 2),
-            Math.pow(nodeA.translation[2] - nodeB.translation[2], 2));
+            Math.pow(boxA.node.translation[0] - boxB.node.translation[0], 2),
+            Math.pow(boxA.node.translation[1] - boxB.node.translation[1], 2),
+            Math.pow(boxA.node.translation[2] - boxB.node.translation[2], 2));
         }
 
         const interactionDistance = 0.4;
 
         let interactionBoxColor = defaultBoxColor;
-        if (Distance(interactionBoxes.left, interactionBox) < interactionDistance) {
+        if (Distance(indexFingerBoxes.left, interactionBox) < interactionDistance) {
           interactionBoxColor = leftBoxColor;
-        } else if (Distance(interactionBoxes.right, interactionBox) < interactionDistance) {
+        } else if (Distance(indexFingerBoxes.right, interactionBox) < interactionDistance) {
           interactionBoxColor = rightBoxColor;
         }
 
