@@ -336,7 +336,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         if (!interactionBox) {
           // Add box to demonstrate hand interaction
-          let interactionBox = createBoxPrimitive(defaultBoxColor);
+          interactionBox = createBoxPrimitive(defaultBoxColor);
           interactionBox.translation = [0, 0, -1];
           interactionBox.scale = [0.5, 0.5, 0.5];
           scene.addNode(interactionBox);
