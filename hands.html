@@ -363,10 +363,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         leftInteractionBox.visible = false;
         rightInteractionBox.visible = false;
         if (Distance(indexFingerBoxes.left.node, interactionBox) < interactionDistance) {
-          interactionBoxColor = leftBoxColor;
           leftInteractionBox.visible = true;
         } else if (Distance(indexFingerBoxes.right.node, interactionBox) < interactionDistance) {
-          interactionBoxColor = rightBoxColor;
           rightInteractionBox.visible = true;
         }
         interactionBox.visible = !(leftInteractionBox || rightInteractionBox.visible);
