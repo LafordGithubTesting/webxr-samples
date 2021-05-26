@@ -1,17 +1,14 @@
 <!doctype html>
 <!--
 Copyright 2018 The Immersive Web Community Group
-
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
 the Software without restriction, including without limitation the rights to
 use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
@@ -61,10 +58,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let polyfill = new WebXRPolyfill();
       }
 
-      let isARAvailable = false;
-      let isVRAvailable = false;
-      let xrSessionString = 'immersive-vr';
-
       // XR globals.
       let xrButton = null;
       let xrImmersiveRefSpace = null;
@@ -72,135 +65,117 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let boxes_left = [];
       let boxes_right = [];
       let boxes = { left: boxes_left, right: boxes_right };
-      let interactionBoxes = {left: null, right: null};
       let isAR = false;
       const numJoints = 25;
       let radii = new Float32Array(numJoints);
       let positions = new Float32Array(16 * numJoints);
 
       // WebGL scene globals.
-      let gl = null;
-      let renderer = null;
-      let scene = new Scene();
-      scene.addNode(new Gltf2Node({ url: 'media/gltf/space/space.gltf' }));
+    let gl = null;
+    let renderer = null;
+    let scene = new Scene();
+    //scene.addNode(new Gltf2Node({ url: 'media/gltf/space/space.gltf' }));
+    //scene.addNode(new SkyboxNode({ url: 'media/textures/eilenriede-park-2k.png' }));
 
-      let jointNames = [
-          "wrist",
-          "thumb-metacarpal",
-          "thumb-phalanx-proximal",
-          "thumb-phalanx-distal",
-          "thumb-tip",
-          "index-finger-metacarpal",
-          "index-finger-phalanx-proximal",
-          "index-finger-phalanx-intermediate",
-          "index-finger-phalanx-distal",
-          "index-finger-tip",
-          "middle-finger-metacarpal",
-          "middle-finger-phalanx-proximal",
-          "middle-finger-phalanx-intermediate",
-          "middle-finger-phalanx-distal",
-          "middle-finger-tip",
-          "ring-finger-metacarpal",
-          "ring-finger-phalanx-proximal",
-          "ring-finger-phalanx-intermediate",
-          "ring-finger-phalanx-distal",
-          "ring-finger-tip",
-          "pinky-finger-metacarpal",
-          "pinky-finger-phalanx-proximal",
-          "pinky-finger-phalanx-intermediate",
-          "pinky-finger-phalanx-distal",
-          "pinky-finger-tip"
-      ];
-        
-      function addBox(x, y, z, r, g, b, offset) {
-        function prim() {
-          let boxBuilder = new BoxBuilder();
-          boxBuilder.pushCube([0, 0, 0], 1);
-          let boxPrimitive = boxBuilder.finishPrimitive(renderer);
-          let boxMaterial = new PbrMaterial();
-          boxMaterial.baseColorFactor.value = [r, g, b, 1];
-          return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
-        }
-        function primAxis(r, g, b, x, y, z) {
-          let boxBuilder = new BoxBuilder();
-          boxBuilder.pushCube([x, y, z], 1);
-          let boxPrimitive = boxBuilder.finishPrimitive(renderer);
-          let boxMaterial = new PbrMaterial();
-          boxMaterial.baseColorFactor.value = [r, g, b, 1];
-          return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
-        }
-
-        let boxNode = new Node();
-        boxNode.addRenderPrimitive(prim());
-
-        boxNode.addRenderPrimitive(primAxis(1, 0, 0, 1, 0, 0)); // X
-        boxNode.addRenderPrimitive(primAxis(0, 1, 0, 0, 1, 0)); // Y
-        boxNode.addRenderPrimitive(primAxis(0, 0, 1, 0, 0, 1)); // Z
-
-        // Marks the node as one that needs to be checked when hit testing.
-        boxNode.selectable = true;
-        return {
-          node: boxNode,
-          position: [x, y, z],
-          offset: offset,
-          jointName: jointNames[offset]
-        };
+    let jointNames = [
+        "wrist",
+        "thumb-metacarpal",
+        "thumb-phalanx-proximal",
+        "thumb-phalanx-distal",
+        "thumb-tip",
+        "index-finger-metacarpal",
+        "index-finger-phalanx-proximal",
+        "index-finger-phalanx-intermediate",
+        "index-finger-phalanx-distal",
+        "index-finger-tip",
+        "middle-finger-metacarpal",
+        "middle-finger-phalanx-proximal",
+        "middle-finger-phalanx-intermediate",
+        "middle-finger-phalanx-distal",
+        "middle-finger-tip",
+        "ring-finger-metacarpal",
+        "ring-finger-phalanx-proximal",
+        "ring-finger-phalanx-intermediate",
+        "ring-finger-phalanx-distal",
+        "ring-finger-tip",
+        "pinky-finger-metacarpal",
+        "pinky-finger-phalanx-proximal",
+        "pinky-finger-phalanx-intermediate",
+        "pinky-finger-phalanx-distal",
+        "pinky-finger-tip"
+    ];
+      
+    function addBox(x, y, z, r, g, b, box_list, offset) {
+      function prim() {
+        let boxBuilder = new BoxBuilder();
+        boxBuilder.pushCube([0, 0, 0], 1);
+        let boxPrimitive = boxBuilder.finishPrimitive(renderer);
+        let boxMaterial = new PbrMaterial();
+        boxMaterial.baseColorFactor.value = [r, g, b, 1];
+        return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
+      }
+      function primAxis(r, g, b, x, y, z) {
+        let boxBuilder = new BoxBuilder();
+        boxBuilder.pushCube([x, y, z], 1);
+        let boxPrimitive = boxBuilder.finishPrimitive(renderer);
+        let boxMaterial = new PbrMaterial();
+        boxMaterial.baseColorFactor.value = [r, g, b, 1];
+        return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
       }
 
-      function initHands() {
-        for (const box of boxes_left) {
-          scene.removeNode(box.node);
-        }
-        for (const box of boxes_right) {
-          scene.removeNode(box.node);
-        }
-        if (interactionBoxes.left) {
-          scene.removeNode(interactionBoxes.left);
-        }
-        if (interactionBoxes.right) {
-          scene.removeNode(interactionBoxes.right);
-        }
-        boxes_left = [];
-        boxes_right = [];
-        boxes = { left: boxes_left, right: boxes_right };
-        if (typeof XRHand !== 'undefined') {
-          for (let i = 0; i < numJoints; i++) {
-            const r = .6 + Math.random() * .4;
-            const g = .6 + Math.random() * .4;
-            const b = .6 + Math.random() * .4;
-            boxes_left.push(addBox(0, 0, 0, r, g, b, i));
-            boxes_right.push(addBox(0, 0, 0, r, g, b, i));
-          }
-        }
+      let boxNode = new Node();
+      boxNode.addRenderPrimitive(prim());
 
-        interactionBoxes.left = addBox(0, 0, 0, 0, 0.5, 0.5, i);
-        interactionBoxes.right = addBox(0, 0, 0, 0.5, 0, 0.5, i);
+      //boxNode.addRenderPrimitive(primAxis(1, 0, 0, 1, 0, 0)); // X
+      //boxNode.addRenderPrimitive(primAxis(0, 1, 0, 0, 1, 0)); // Y
+      //boxNode.addRenderPrimitive(primAxis(0, 0, 1, 0, 0, 1)); // Z
+
+      // Marks the node as one that needs to be checked when hit testing.
+      boxNode.selectable = true;
+      box_list.push({
+        node: boxNode,
+        position: [x, y, z],
+        offset: offset,
+        jointName: jointNames[offset]
+      });
+    }
+
+    function initHands() {
+      for (const box of boxes_left) {
+        scene.removeNode(box.node);
       }
+      for (const box of boxes_right) {
+        scene.removeNode(box.node);
+      }
+      boxes_left = [];
+      boxes_right = [];
+      boxes = { left: boxes_left, right: boxes_right };
+      if (typeof XRHand !== 'undefined') {
+        for (let i = 0; i < numJoints; i++) {
+          const r = .6 + Math.random() * .4;
+          const g = .6 + Math.random() * .4;
+          const b = .6 + Math.random() * .4;
+          addBox(0, 0, 0, r, g, b, boxes_left, i);
+          addBox(0, 0, 0, r, g, b, boxes_right, i);
+        }
+      }
+    }
 
       function initXR() {
         xrButton = new WebXRButton({
           onRequestSession: onRequestSession,
           onEndSession: onEndSession,
-          textEnterXRTitle: isARAvailable ? "START AR" : "START VR",
-          textXRNotFoundTitle: isARAvailable ? "AR NOT FOUND" : "VR NOT FOUND",
-          textExitXRTitle: isARAvailable ? "EXIT  AR" : "EXIT  VR",
+          textEnterXRTitle: "START AR",
+          textXRNotFoundTitle: "AR NOT FOUND",
+          textExitXRTitle: "EXIT  AR",
         });
         document.querySelector('header').appendChild(xrButton.domElement);
 
         if (navigator.xr) {
-          // Checks to ensure that 'immersive-ar' or 'immersive-vr' mode is available,
-          // and only enables the button if so.
-          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
-            isARAvailable = supported;
+          // Checks to ensure that 'immersive-vr' mode is available, and only
+          // enables the button if so.
+          navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
             xrButton.enabled = supported;
-            if (!supported) {
-              navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
-                isVRAvailable = supported;
-                xrButton.enabled = supported;
-              });
-            } else {
-              xrSessionString = 'immersive-ar';
-            }
           });
 
           navigator.xr.requestSession('inline').then(onSessionStarted);
@@ -244,10 +219,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       function onSessionStarted(session) {
         session.addEventListener('end', onSessionEnded);
 
-        if (session.isImmersive && isARAvailable) {
+        if (session.isImmersive) {
           // When in 'immersive-vr' mode don't draw an opaque background because
           // we want the real world to show through.
-          skybox.visible = false;
+          //skybox.visible = false;
         }
 
         session.addEventListener('visibilitystate', e => {
@@ -290,7 +265,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         if (event.session.isImmersive) {
           xrButton.setSession(null);
           // Turn the background back on when we go back to the inlive view.
-          skybox.visible = true;
+          //skybox.visible = true;
         }
       }
 
@@ -315,6 +290,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             }
 
             for (const box of boxes[inputSource.handedness]) {
+              continue;
               scene.addNode(box.node);
               let matrix = positions.slice(offset, offset + 16);
               offset += 16;
@@ -326,17 +302,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               mat4.getTranslation(box.node.translation, matrix);
               mat4.getRotation(box.node.rotation, matrix);
               box.node.scale = [jointRadius, jointRadius, jointRadius];
-            }
-
-            // Render a special box for each index finger on each hand
-            const interactionBox = interactionBoxes[inputSource.handedness];
-            let joint = inputSource.hand.get('index-finger-tip');
-            let jointPose = frame.getJointPose(joint, refSpace);
-            if (jointPose) {
-              let matrix = jointPose.transform.matrix;
-              mat4.getTranslation(interactionBox.node.translation, matrix);
-              mat4.getRotation(interactionBox.node.rotation, matrix);
-              interactionBox.node.scale = [0.02, 0.02, 0.02];
             }
           }
         }
