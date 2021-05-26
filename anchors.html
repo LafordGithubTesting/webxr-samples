@@ -80,7 +80,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       scene.addNode(skybox);
 
       const MAX_ANCHORED_OBJECTS = 30;
-      let anchoredObjects = [];
+
+      // Set with all anchors tracked in a previous frame.
+      let all_previous_anchors = new Set();
 
       function initXR() {
         xrButton = new WebXRButton({
@@ -189,17 +191,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       function addAnchoredObjectToScene(anchor) {
         let flower = new Gltf2Node({url: 'media/gltf/sunflower/sunflower.gltf'});
         scene.addNode(flower);
-        anchoredObjects.push({
-          anchoredObject: flower,
-          anchor: anchor
-        });
+        anchor.context.sceneObject = flower;
+        flower.anchor = anchor;
+        anchoredObjects.push(flower);
 
         // For performance reasons if we add too many objects start
         // removing the oldest ones to keep the scene complexity
         // from growing too much.
         if (anchoredObjects.length > MAX_ANCHORED_OBJECTS) {
           let objectToRemove = anchoredObjects.shift();
-          scene.removeNode(objectToRemove.anchoredObject);
+          scene.removeNode(objectToRemove);
           objectToRemove.anchor.delete();
         }
       }
@@ -227,12 +228,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                          inlineViewerHelper.referenceSpace;
         let pose = frame.getViewerPose(refSpace);
 
-        // TODO deal with frame.TrackedAnchors
-
         // Update the position of all the anchored objects based on the currently reported positions of their anchors
-        for (const {anchoredObject, anchor} of anchoredObjects) {
-          const anchorPose = frame.getPose(anchor.anchorSpace, xrImmersiveRefSpace);
-          anchoredObject.matrix = anchorPose.transform.matrix;
+        const tracked_anchors = frame.trackedAnchors;
+        if(tracked_anchors){
+          all_previous_anchors.forEach(anchor => {
+            if(!tracked_anchors.has(anchor)){
+              scene.removeNode(anchor.sceneObject);
+            }
+          });
+
+          tracked_anchors.forEach(anchor => {
+            const anchorPose = frame.getPose(anchor.anchorSpace, xrRefSpace);
+            if (anchorPose) {
+              anchor.context.sceneObject.matrix = anchorPose.transform.matrix;
+              anchor.context.sceneObject.visible = true;
+            } else {
+              anchor.context.sceneObject.visible = false;
+            }
+          });
+
+          all_previous_anchors = tracked_anchors;
+        } else {
+          all_previous_anchors.forEach(anchor => {
+            scene.removeNode(anchor.sceneObject);
+          });
+
+          all_previous_anchors = new Set();
         }
 
         scene.startFrame();
