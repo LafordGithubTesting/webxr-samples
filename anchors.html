@@ -154,7 +154,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         initGL();
-        
+
         // This and all future samples that visualize controllers will use this
         // convenience method to listen for changes to the active XRInputSources
         // and load the right meshes based on the profiles array.
@@ -207,7 +207,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let frame = event.frame;
         let anchorPose = new XRRigidTransform();
 
-        if (session.isImmersive) {
+        if (session && session.isImmersive) {
           // Create a free-floating anchor.
           frame.createAnchor(new XRRigidTransform(), event.inputSource.targetRaySpace).then((anchor) => {
             addAnchoredObjectToScene(anchor);
