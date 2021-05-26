@@ -120,9 +120,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
       }
 
-      const defaultBoxColor = [1, 1, 1];
-      const leftBoxColor = [1, 0, 1];
-      const rightBoxColor = [0, 1, 1];
+      const defaultBoxColor = {r: 0.5, g: 0.5, b: 0.5};
+      const leftBoxColor = {r: 1, g: 0, b: 1};
+      const rightBoxColor = {r: 0, g: 1, b: 1};
       let interactionBox = null;
       let leftInteractionBox = null;
       let rightInteractionBox = null;
@@ -344,9 +344,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             box.scale = [0.5, 0.5, 0.5];
             return box;
           }
-          interactionBox = AddInteractionBox(defaultBoxColor);
-          leftInteractionBox = AddInteractionBox(leftBoxColor);
-          rightInteractionBox = AddInteractionBox(rightBoxColor);
+          interactionBox = AddInteractionBox(defaultBoxColor.r, defaultBoxColor.g, defaultBoxColor.b);
+          leftInteractionBox = AddInteractionBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b);
+          rightInteractionBox = AddInteractionBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b);
           scene.addNode(interactionBox);
           scene.addNode(leftInteractionBox);
           scene.addNode(rightInteractionBox);
@@ -359,7 +359,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             Math.pow(nodeA.translation[2] - nodeB.translation[2], 2));
         }
 
-        const interactionDistance = 0.4;
+        const interactionDistance = 0.25;
 
         leftInteractionBox.visible = false;
         rightInteractionBox.visible = false;
