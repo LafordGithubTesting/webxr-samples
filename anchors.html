@@ -205,9 +205,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
       function onSelect(event) {
         let frame = event.frame;
+        let session = frame.session;
         let anchorPose = new XRRigidTransform();
 
-        if (session && session.isImmersive) {
+        if (session.isImmersive) {
           // Create a free-floating anchor.
           frame.createAnchor(new XRRigidTransform(), event.inputSource.targetRaySpace).then((anchor) => {
             addAnchoredObjectToScene(anchor);
