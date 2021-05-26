@@ -215,9 +215,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let session = frame.session;
         let anchorPose = new XRRigidTransform();
 
+        // If the user is on a screen based device, place the anchor 1 meter in front of them.
+        // Otherwise place the anchor at the location of the input device
+        if (targetRayMode == 'screen') {
+          anchorPose = new XRRigidTransform(
+          {x: 0, y: 0, z: -1},
+          {x: 0, y: 0, z: 0, w: 1});
+        }
+
         if (session.isImmersive) {
           // Create a free-floating anchor.
-          frame.createAnchor(new XRRigidTransform(), event.inputSource.targetRaySpace).then((anchor) => {
+          frame.createAnchor(anchorPose, event.inputSource.targetRaySpace).then((anchor) => {
             addAnchoredObjectToScene(anchor);
           }, (error) => {
             console.error("Could not create anchor: " + error);
