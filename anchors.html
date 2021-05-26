@@ -223,10 +223,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       // Called every time a XRSession requests that a new frame be drawn.
       function onXRFrame(t, frame) {
         let session = frame.session;
-        let refSpace = session.isImmersive ?
+        let xrRefSpace = session.isImmersive ?
                          xrImmersiveRefSpace :
                          inlineViewerHelper.referenceSpace;
-        let pose = frame.getViewerPose(refSpace);
+        let pose = frame.getViewerPose(xrRefSpace);
 
         // Update the position of all the anchored objects based on the currently reported positions of their anchors
         const tracked_anchors = frame.trackedAnchors;
