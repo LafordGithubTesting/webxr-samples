@@ -120,14 +120,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
       }
 
-      const defaultBoxColor = {r: 0.5, g: 0.5, b: 0.5};
+      const defaultBoxColor = {r: 1, g: 1, b: 1};
       const leftBoxColor = {r: 1, g: 0, b: 1};
       const rightBoxColor = {r: 0, g: 1, b: 1};
       let interactionBox = null;
       let leftInteractionBox = null;
       let rightInteractionBox = null;
         
-      function addBox(r, g, b, offset) {
+      function addBoxForJoint(r, g, b, offset) {
         let boxNode = new Node();
         boxNode.addRenderPrimitive(createBoxPrimitive(r, g, b));
 
@@ -161,14 +161,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const r = .6 + Math.random() * .4;
             const g = .6 + Math.random() * .4;
             const b = .6 + Math.random() * .4;
-            boxes_left.push(addBox(r, g, b, i));
-            boxes_right.push(addBox(r, g, b, i));
+            boxes_left.push(addBoxForJoint(r, g, b, i));
+            boxes_right.push(addBoxForJoint(r, g, b, i));
           }
         }
 
         indexFingerBoxes = {
-          left: addBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b, jointNames.indexOf('index-finger-tip')),
-          right: addBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b, jointNames.indexOf('index-finger-tip'))
+          left: addBoxForJoint(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b, jointNames.indexOf('index-finger-tip')),
+          right: addBoxForJoint(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b, jointNames.indexOf('index-finger-tip'))
         };
       }
 
@@ -341,6 +341,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             let box = new Node();
             box.addRenderPrimitive(createBoxPrimitive(color));
             box.translation = [0, 0, -1];
+            box.scale = [0.5, 0.5, 0.5];
             return box;
           }
           interactionBox = AddInteractionBox(defaultBoxColor);
