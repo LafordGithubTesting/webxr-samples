@@ -248,13 +248,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
 
         initGL();
-
-        // Add box to demonstrate hand interaction
-        interactionBox = createBoxPrimitive(defaultBoxColor);
-        interactionBox.translation = [0, 0, -1];
-        interactionBox.scale = [0.5, 0.5, 0.5];
-        scene.addNode(interactionBox.node);
-
         // This and all future samples that visualize controllers will use this
         // convenience method to listen for changes to the active XRInputSources
         // and load the right meshes based on the profiles array.
@@ -340,6 +333,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         updateInputSources(session, frame, refSpace);
 
+        if (!interactionBox) {
+          // Add box to demonstrate hand interaction
+          interactionBox = createBoxPrimitive(defaultBoxColor);
+          interactionBox.translation = [0, 0, -1];
+          scene.addNode(interactionBox.node);
+        }
+
         function Distance(boxA, boxB) {
           return Math.sqrt(
             Math.pow(boxA.node.translation[0] - boxB.node.translation[0], 2),
@@ -349,12 +349,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         const interactionDistance = 0.4;
 
+        let interactionBoxScale = 0.5;
         let interactionBoxColor = defaultBoxColor;
         if (Distance(indexFingerBoxes.left, interactionBox) < interactionDistance) {
           interactionBoxColor = leftBoxColor;
+          interactionBoxScale = 0.6;
         } else if (Distance(indexFingerBoxes.right, interactionBox) < interactionDistance) {
           interactionBoxColor = rightBoxColor;
+          interactinoBoxScale = 0.6;
         }
+
+        interactionBox.scale = [interactionBoxScale, interactionBoxScale, interactionBoxScale];
 
         let boxMaterial = new PbrMaterial();
         boxMaterial.baseColorFactor.value = [interactionBoxrColor.r, interactionBoxrColor.g, interactionBoxrColor.b, 1];
