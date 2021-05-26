@@ -173,8 +173,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
         }
 
-        interactionBoxes.left = addBox(0, 0, 0, 0, 0.5, 0.5, jointNames.indexOf('index-finger-tip'));
-        interactionBoxes.right = addBox(0, 0, 0, 0.5, 0, 0.5, jointNames.indexOf('index-finger-tip'));
+        interactionBoxes = {
+          left:addBox(0, 0, 0, 0, 0.5, 0.5, jointNames.indexOf('index-finger-tip')),
+          right: addBox(0, 0, 0, 0.5, 0, 0.5, jointNames.indexOf('index-finger-tip'))
+        };
       }
 
       function initXR() {
@@ -330,6 +332,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
             // Render a special box for each index finger on each hand
             const interactionBox = interactionBoxes[inputSource.handedness];
+            scene.addNode(interactionBox.node);
             let joint = inputSource.hand.get('index-finger-tip');
             let jointPose = frame.getJointPose(joint, refSpace);
             if (jointPose) {
