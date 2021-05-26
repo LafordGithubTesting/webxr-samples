@@ -368,7 +368,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         } else if (Distance(indexFingerBoxes.right.node, interactionBox) < interactionDistance) {
           rightInteractionBox.visible = true;
         }
-        interactionBox.visible = !(leftInteractionBox || rightInteractionBox.visible);
+        interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible);
 
         // In this sample and most samples after it we'll use a helper function
         // to automatically add the right meshes for the session's input sources
