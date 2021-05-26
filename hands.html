@@ -124,6 +124,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       const leftBoxColor = {r: 1, g: 0, b: 1};
       const rightBoxColor = {r: 0, g: 1, b: 1};
       let interactionBox = null;
+      let leftInteractionBox = null;
+      let rightInteractionBox = null;
         
       function addBox(r, g, b, offset) {
         let boxNode = new Node();
@@ -335,10 +337,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         if (!interactionBox) {
           // Add box to demonstrate hand interaction
-          interactionBox = new Node();
-          interactionBox.addRenderPrimitive(createBoxPrimitive(defaultBoxColor));
-          interactionBox.translation = [0, 0, -1];
+          function AddInteractionBox(color) {
+            let box = new Node();
+            box.addRenderPrimitive(createBoxPrimitive(color));
+            box.translation = [0, 0, -1];
+            return box;
+          }
+          interactionBox = AddInteractionBox(defaultBoxColor);
+          leftInteractionBox = AddInteractionBox(leftBoxColor);
+          rightInteractionBox = AddInteractionBox(rightBoxColor);
           scene.addNode(interactionBox);
+          scene.addNode(leftInteractionBox);
+          scene.addNode(rightInteractionBox);
         }
 
         function Distance(nodeA, nodeB) {
@@ -350,21 +360,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         const interactionDistance = 0.4;
 
-        let interactionBoxScale = 0.5;
-        let interactionBoxColor = defaultBoxColor;
+        leftInteractionBox.visible = false;
+        rightInteractionBox.visible = false;
         if (Distance(indexFingerBoxes.left.node, interactionBox) < interactionDistance) {
           interactionBoxColor = leftBoxColor;
-          interactionBoxScale = 0.6;
+          leftInteractionBox.visible = true;
         } else if (Distance(indexFingerBoxes.right.node, interactionBox) < interactionDistance) {
           interactionBoxColor = rightBoxColor;
-          interactinoBoxScale = 0.6;
+          rightInteractionBox.visible = true;
         }
-
-        interactionBox.scale = [interactionBoxScale, interactionBoxScale, interactionBoxScale];
-
-        let boxMaterial = new PbrMaterial();
-        boxMaterial.baseColorFactor.value = [interactionBoxColor.r, interactionBoxColor.g, interactionBoxColor.b, 1];
-        interactionBox.setRenderMaterial(boxMaterial);
+        interactionBox.visible = !(leftInteractionBox || rightInteractionBox.visible);
 
         // In this sample and most samples after it we'll use a helper function
         // to automatically add the right meshes for the session's input sources
