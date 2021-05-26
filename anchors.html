@@ -57,8 +57,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let polyfill = new WebXRPolyfill();
       }
 
-      // TODO add controllers in
-
       // XR globals.
       let xrButton = null;
       let xrImmersiveRefSpace = null;
@@ -121,7 +119,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               xrButton.setSession(session);
               session.isImmersive = true;
               onSessionStarted(session);
-            }).catch(function(e){alert(e);});
+            });
       }
 
       function initGL() {
@@ -182,7 +180,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
       }
 
-      function addAnchoredObjectsToScene(anchor) {
+      function addAnchoredObjectToScene(anchor) {
         let flower = new Gltf2Node({url: 'media/gltf/sunflower/sunflower.gltf'});
         scene.addNode(flower);
         anchoredObjects.push({
@@ -202,14 +200,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
       function onSelect(event) {
         let frame = event.frame;
-
         let anchorPose = new XRRigidTransform();
-        // Create a free-floating anchor.
-        frame.createAnchor(new XRRigidTransform(), event.inputSource.targetRaySpace).then((anchor) => {
-          addAnchoredObjectsToScene(anchor);
-        }, (error) => {
-          console.error("Could not create anchor: " + error);
-        });
+
+        if (session.isImmersive) {
+          // Create a free-floating anchor.
+          frame.createAnchor(new XRRigidTransform(), event.inputSource.targetRaySpace).then((anchor) => {
+            addAnchoredObjectToScene(anchor);
+          }, (error) => {
+            console.error("Could not create anchor: " + error);
+          });
+        }
       }
 
       // Called every time a XRSession requests that a new frame be drawn.
