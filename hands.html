@@ -173,8 +173,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
         }
 
-        interactionBoxes.left = addBox(0, 0, 0, 0, 0.5, 0.5, i);
-        interactionBoxes.right = addBox(0, 0, 0, 0.5, 0, 0.5, i);
+        interactionBoxes.left = addBox(0, 0, 0, 0, 0.5, 0.5, jointNames.indexOf('index-finger-tip'));
+        interactionBoxes.right = addBox(0, 0, 0, 0.5, 0, 0.5, jointNames.indexOf('index-finger-tip'));
       }
 
       function initXR() {
