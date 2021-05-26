@@ -351,12 +351,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         const interactionDistance = 0.4;
 
-        interactionBox.node.material.baseColorFactor = defaultBoxColor;
+        let interactionBoxColor = defaultBoxColor;
         if (Distance(interactionBoxes.left, interactionBox) < interactionDistance) {
-          interactionBox.node.material.baseColorFactor = leftBoxColor;
+          interactionBoxColor = leftBoxColor;
         } else if (Distance(interactionBoxes.right, interactionBox) < interactionDistance) {
-          interactionBox.node.material.baseColorFactor = rightBoxColor;
+          interactionBoxColor = rightBoxColor;
         }
+
+        let boxMaterial = new PbrMaterial();
+        boxMaterial.baseColorFactor.value = [interactionBoxrColor.r, interactionBoxrColor.g, interactionBoxrColor.b, 1];
+        interactionBox.setrenderMaterial(boxMaterial);
 
         // In this sample and most samples after it we'll use a helper function
         // to automatically add the right meshes for the session's input sources
