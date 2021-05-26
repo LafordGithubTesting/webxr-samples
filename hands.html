@@ -123,10 +123,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       const defaultBoxColor = {r: 0.5, g: 0.5, b: 0.5};
       const leftBoxColor = {r: 1, g: 0, b: 1};
       const rightBoxColor = {r: 0, g: 1, b: 1};
-      let interactionBox = createBoxPrimitive(defaultBoxColor);
-      interactionBox.translation = [0, 0, -1];
-      interactionBox.scale = [0.5, 0.5, 0.5];
-      scene.addNode(interactionBox);
+      let interactionBox = null;
         
       function addBox(r, g, b, offset) {
         let boxNode = new Node();
@@ -251,6 +248,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
 
         initGL();
+
+        // Add box to demonstrate hand interaction
+        let interactionBox = createBoxPrimitive(defaultBoxColor);
+        interactionBox.translation = [0, 0, -1];
+        interactionBox.scale = [0.5, 0.5, 0.5];
+        scene.addNode(interactionBox);
 
         // This and all future samples that visualize controllers will use this
         // convenience method to listen for changes to the active XRInputSources
