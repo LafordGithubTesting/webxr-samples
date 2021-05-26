@@ -57,6 +57,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         let polyfill = new WebXRPolyfill();
       }
 
+      // TODO add controllers in
+
       // XR globals.
       let xrButton = null;
       let xrImmersiveRefSpace = null;
@@ -114,7 +116,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
               xrButton.setSession(session);
               session.isImmersive = true;
               onSessionStarted(session);
-            });
+            }).catch(function(e){alert(e);});
       }
 
       function initGL() {
