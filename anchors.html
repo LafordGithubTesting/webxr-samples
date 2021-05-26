@@ -80,6 +80,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       scene.addNode(skybox);
 
       const MAX_ANCHORED_OBJECTS = 30;
+      let anchoredObjects = [];
 
       // Set with all anchors tracked in a previous frame.
       let all_previous_anchors = new Set();
@@ -190,7 +191,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
       function addAnchoredObjectToScene(anchor) {
         console.debug("Anchor created");
-        
+
         anchor.context = {};
 
         let flower = new Gltf2Node({url: 'media/gltf/sunflower/sunflower.gltf'});
