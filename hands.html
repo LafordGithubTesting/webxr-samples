@@ -82,14 +82,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let gl = null;
       let renderer = null;
       let scene = new Scene();
-      let solarSystem = new Gltf2Node({url: 'media/gltf/space/space.gltf'});
-      // The solar system is big (citation needed). Scale it down so that users
-      // can move around the planets more easily.
-      solarSystem.scale = [0.1, 0.1, 0.1];
+
       scene.addNode(solarSystem);
-      // Still adding a skybox, but only for the benefit of the inline view.
-      let skybox = new SkyboxNode({url: 'media/textures/milky-way-4k.png'});
-      scene.addNode(skybox);
 
       let jointNames = [
           "wrist",
@@ -118,33 +112,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           "pinky-finger-phalanx-distal",
           "pinky-finger-tip"
       ];
-        
-      function addBox(x, y, z, r, g, b, offset) {
-        function prim() {
-          let boxBuilder = new BoxBuilder();
-          boxBuilder.pushCube([0, 0, 0], 1);
-          let boxPrimitive = boxBuilder.finishPrimitive(renderer);
-          let boxMaterial = new PbrMaterial();
-          boxMaterial.baseColorFactor.value = [r, g, b, 1];
-          return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
-        }
-        function primAxis(r, g, b, x, y, z) {
-          let boxBuilder = new BoxBuilder();
-          boxBuilder.pushCube([x, y, z], 1);
-          let boxPrimitive = boxBuilder.finishPrimitive(renderer);
-          let boxMaterial = new PbrMaterial();
-          boxMaterial.baseColorFactor.value = [r, g, b, 1];
-          return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
-        }
 
+      function createBoxPrimitive(r, g, b) {
+        let boxBuilder = new BoxBuilder();
+        boxBuilder.pushCube([0, 0, 0], 1);
+        let boxPrimitive = boxBuilder.finishPrimitive(renderer);
+        let boxMaterial = new PbrMaterial();
+        boxMaterial.baseColorFactor.value = [r, g, b, 1];
+        return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
+      }
+
+      const defaultBoxColor = {r: 0.5, g: 0.5, b: 0.5};
+      const leftBoxColor = {r: 1, g: 0, b: 1};
+      const rightBoxColor = {r: 0, g: 1, b: 1};
+      let interactionBox = createBoxPrimitive(defaultBoxColor);
+      interactionBox.translation = [0, 0, -1];
+      interactionBox.scale = [0.5, 0.5, 0.5];
+      scene.addNode(interactionBox);
+        
+      function addBox(r, g, b, offset) {
         let boxNode = new Node();
-        boxNode.addRenderPrimitive(prim());
+        boxNode.addRenderPrimitive(createBoxPrimitive(r, g, b));
 
         // Marks the node as one that needs to be checked when hit testing.
         boxNode.selectable = true;
         return {
           node: boxNode,
-          position: [x, y, z],
           offset: offset,
           jointName: jointNames[offset]
         };
@@ -171,14 +164,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             const r = .6 + Math.random() * .4;
             const g = .6 + Math.random() * .4;
             const b = .6 + Math.random() * .4;
-            boxes_left.push(addBox(0, 0, 0, r, g, b, i));
-            boxes_right.push(addBox(0, 0, 0, r, g, b, i));
+            boxes_left.push(addBox(r, g, b, i));
+            boxes_right.push(addBox(r, g, b, i));
           }
         }
 
         interactionBoxes = {
-          left:addBox(0, 0, 0, 1, 0, 1, jointNames.indexOf('index-finger-tip')),
-          right: addBox(0, 0, 0, 0, 1, 1, jointNames.indexOf('index-finger-tip'))
+          left: addBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b, jointNames.indexOf('index-finger-tip')),
+          right: addBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b, jointNames.indexOf('index-finger-tip'))
         };
       }
 
@@ -361,6 +354,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         updateInputSources(session, frame, refSpace);
+
+        function Distance(boxA, boxB) {
+          return Math.sqrt(
+            Math.pow(boxA.node.translation[0] - boxB.node.translation[0], 2),
+            Math.pow(boxA.node.translation[1] - boxB.node.translation[1], 2),
+            Math.pow(boxA.node.translation[2] - boxB.node.translation[2], 2));
+        }
+
+        const interactionDistance = 0.4;
+
+        interactionBox.node.material.baseColorFactor = defaultBoxColor;
+        if (Distance(interactionBoxes.left, interactionBox) < interactionDistance) {
+          interactionBox.node.material.baseColorFactor = leftBoxColor;
+        } else if (Distance(interactionBoxes.right, interactionBox) < interactionDistance) {
+          interactionBox.node.material.baseColorFactor = rightBoxColor;
+        }
 
         // In this sample and most samples after it we'll use a helper function
         // to automatically add the right meshes for the session's input sources
