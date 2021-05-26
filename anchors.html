@@ -189,6 +189,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       }
 
       function addAnchoredObjectToScene(anchor) {
+        console.debug("Anchor created");
+        
+        anchor.context = {};
+
         let flower = new Gltf2Node({url: 'media/gltf/sunflower/sunflower.gltf'});
         scene.addNode(flower);
         anchor.context.sceneObject = flower;
