@@ -83,10 +83,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let anchoredObjects = [];
 
       function initXR() {
-        // Use 'immersive-ar' if supported
-        if (isARAvailable) {
-        }
-
         xrButton = new WebXRButton({
           onRequestSession: onRequestSession,
           onEndSession: onEndSession,
