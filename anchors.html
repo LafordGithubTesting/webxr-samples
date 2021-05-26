@@ -83,8 +83,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let anchoredObjects = [];
 
       function initXR() {
-        isARAvailable = navigator.xr.isSessionSupported('immersive-ar');
-        isVRAvailable = navigator.xr.isSessionSupported('immersive-vr');
+        isARAvailable = navigator.xr.isSessionSupported();
+        isVRAvailable = navigator.xr.isSessionSupported();
 
         // Use 'immersive-ar' if supported
         if (isARAvailable) {
@@ -100,11 +100,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         });
         document.querySelector('header').appendChild(xrButton.domElement);
 
-        if (navigator.xr && (isARAvailable || isVRAvailable)) {
+        if (navigator.xr) {
           // Checks to ensure that 'immersive-ar' or 'immersive-vr' mode is available,
           // and only enables the button if so.
-          navigator.xr.isSessionSupported(xrSessionString).then((supported) => {
+          navigator.xr.isSessionSupported('immersive-ar').then((supported) => {
+            isARAvailable = supported;
             xrButton.enabled = supported;
+            if (!supported) {
+              navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+                isVRAvailable = supported;
+                xrButton.enabled = supported;
+              });
+            }
           });
 
           navigator.xr.requestSession('inline').then(onSessionStarted);
