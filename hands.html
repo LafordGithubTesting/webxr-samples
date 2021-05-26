@@ -342,11 +342,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           scene.addNode(interactionBox);
         }
 
-        function Distance(boxA, boxB) {
+        function Distance(nodeA, nodeB) {
           return Math.sqrt(
-            Math.pow(boxA.node.translation[0] - boxB.node.translation[0], 2),
-            Math.pow(boxA.node.translation[1] - boxB.node.translation[1], 2),
-            Math.pow(boxA.node.translation[2] - boxB.node.translation[2], 2));
+            Math.pow(nodeA.translation[0] - nodeB.translation[0], 2),
+            Math.pow(nodeA.translation[1] - nodeB.translation[1], 2),
+            Math.pow(nodeA.translation[2] - nodeB.translation[2], 2));
         }
 
         const interactionDistance = 0.4;
