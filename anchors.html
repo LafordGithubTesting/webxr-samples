@@ -62,6 +62,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let xrImmersiveRefSpace = null;
       let inlineViewerHelper = null;
 
+      let isARAvailable = false;
+      let isVRAvailable = false;
+      let xrSessionString = 'immersive-vr';
+
       // WebGL scene globals.
       let gl = null;
       let renderer = null;
@@ -79,19 +83,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       let anchoredObjects = [];
 
       function initXR() {
+        isARAvailable = navigator.xr.isSessionSupported('immersive-ar');
+        isVRAvailable = navigator.xr.isSessionSupported('immersive-vr');
+
         xrButton = new WebXRButton({
           onRequestSession: onRequestSession,
           onEndSession: onEndSession,
-          textEnterXRTitle: "START AR",
-          textXRNotFoundTitle: "AR NOT FOUND",
-          textExitXRTitle: "EXIT  AR",
+          textEnterXRTitle: isARAvailable ? "START AR" : "START VR",
+          textXRNotFoundTitle: isARAvailable ? "AR NOT FOUND" : "VR NOT FOUND",
+          textExitXRTitle: isARAvailable ? "EXIT  AR" : "EXIT  VR",
         });
         document.querySelector('header').appendChild(xrButton.domElement);
 
-        if (navigator.xr) {
-          // Checks to ensure that 'immersive-vr' mode is available, and only
-          // enables the button if so.
-          navigator.xr.isSessionSupported('immersive-vr').then((supported) => {
+        if (navigator.xr && (isARAvailable || isVRAvailable)) {
+          // Checks to ensure that 'immersive-ar' or 'immersive-vr' mode is available,
+          // and only enables the button if so.
+          navigator.xr.isSessionSupported(xrSessionString).then((supported) => {
             xrButton.enabled = supported;
           });
 
@@ -100,11 +107,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       }
 
       function onRequestSession() {
-        // Requests an 'immersive-vr' session, which ensures that the users
-        // environment will be visible either via video passthrough or a
-        // transparent display. This may be presented either in a headset or
-        // fullscreen on a mobile device.
-        return navigator.xr.requestSession('immersive-vr', {requiredFeatures: ['anchors']})
+        // Requests an 'immersive-ar' or 'immersive-vr' session, depending on which is supported,
+        // and requests the 'anchors' module as a required feature.
+        return navigator.xr.requestSession(xrSessionString, {requiredFeatures: ['anchors']})
             .then((session) => {
               xrButton.setSession(session);
               session.isImmersive = true;
@@ -137,8 +142,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         session.addEventListener('end', onSessionEnded);
         session.addEventListener('select', onSelect);
 
-        if (session.isImmersive) {
-          // When in 'immersive-vr' mode don't draw an opaque background because
+        if (session.isImmersive && isARAvailable) {
+          // When in 'immersive-ar' mode don't draw an opaque background because
           // we want the real world to show through.
           skybox.visible = false;
         }
@@ -207,6 +212,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
                          xrImmersiveRefSpace :
                          inlineViewerHelper.referenceSpace;
         let pose = frame.getViewerPose(refSpace);
+
+        // TODO deal with frame.TrackedAnchors
 
         // Update the position of all the anchored objects based on the currently reported positions of their anchors
         for (const {anchoredObject, anchor} of anchoredObjects) {
