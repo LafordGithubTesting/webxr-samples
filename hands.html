@@ -249,12 +249,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         initGL();
 
-        // Add box to demonstrate hand interaction
-        let interactionBox = createBoxPrimitive(defaultBoxColor);
-        interactionBox.translation = [0, 0, -1];
-        interactionBox.scale = [0.5, 0.5, 0.5];
-        scene.addNode(interactionBox);
-
         // This and all future samples that visualize controllers will use this
         // convenience method to listen for changes to the active XRInputSources
         // and load the right meshes based on the profiles array.
@@ -339,6 +333,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         }
 
         updateInputSources(session, frame, refSpace);
+
+        if (!interactionBox) {
+          // Add box to demonstrate hand interaction
+          let interactionBox = createBoxPrimitive(defaultBoxColor);
+          interactionBox.translation = [0, 0, -1];
+          interactionBox.scale = [0.5, 0.5, 0.5];
+          scene.addNode(interactionBox);
+        }
 
         function Distance(boxA, boxB) {
           return Math.sqrt(
