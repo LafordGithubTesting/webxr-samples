@@ -352,10 +352,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
         let interactionBoxScale = 0.5;
         let interactionBoxColor = defaultBoxColor;
-        if (Distance(indexFingerBoxes.left, interactionBox) < interactionDistance) {
+        if (Distance(indexFingerBoxes.left.node, interactionBox) < interactionDistance) {
           interactionBoxColor = leftBoxColor;
           interactionBoxScale = 0.6;
-        } else if (Distance(indexFingerBoxes.right, interactionBox) < interactionDistance) {
+        } else if (Distance(indexFingerBoxes.right.node, interactionBox) < interactionDistance) {
           interactionBoxColor = rightBoxColor;
           interactinoBoxScale = 0.6;
         }
