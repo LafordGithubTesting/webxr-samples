@@ -359,7 +359,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             Math.pow(nodeA.translation[2] - nodeB.translation[2], 2));
         }
 
-        const interactionDistance = 0.25;
+        const interactionDistance = interactionBox.scale[0];
 
         leftInteractionBox.visible = false;
         rightInteractionBox.visible = false;
