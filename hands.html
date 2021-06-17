@@ -131,8 +131,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       if (indexFingerBoxes.right) {
         scene.removeNode(indexFingerBoxes.right);
       }
-      indexFingerBoxes.left = addBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b);
-      indexFingerBoxes.right = addBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b);
+      indexFingerBoxes.left = addBox(0, 0, 0, leftBoxColor.r, leftBoxColor.g, leftBoxColor.b);
+      indexFingerBoxes.right = addBox(0, 0, 0, rightBoxColor.r, rightBoxColor.g, rightBoxColor.b);
     }
 
     // Checks to see if WebXR is available and, if so, queries a list of
