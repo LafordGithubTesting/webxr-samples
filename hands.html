@@ -320,7 +320,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         function AddInteractionBox(r, g, b) {	
           let box = new Node();	
           box.addRenderPrimitive(createBoxPrimitive(r, g, b));	
-          box.translation = [0, 0, -1];	
+          box.translation = [0, 0, -0.5];	
           box.scale = [0.25, 0.25, 0.25];	
           return box;	
         }	
