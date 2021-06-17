@@ -90,7 +90,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     
     function createBoxPrimitive(r, g, b) {	
       let boxBuilder = new BoxBuilder();	
-      boxBuilder.pushCube([0, 0, 0], 0.4);	
+      boxBuilder.pushCube([0, 0, 0], 1);	
       let boxPrimitive = boxBuilder.finishPrimitive(renderer);	
       let boxMaterial = new PbrMaterial();	
       boxMaterial.baseColorFactor.value = [r, g, b, 1];	
@@ -332,11 +332,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         scene.addNode(rightInteractionBox);	
       }
       
-      mat4.rotateX(interactionBox.matrix, interactionBox.matrix, time/1000);
-      mat4.rotateY(interactionBox.matrix, interactionBox.matrix, time/1500);
-      leftInteractionBox.matrix = interactionBox.matrix;
-      rightInteractionBox.matrix = interactionBox.matrix;
-      
       function Distance(nodeA, nodeB) {	
         return Math.sqrt(	
           Math.pow(nodeA.translation[0] - nodeB.translation[0], 2) +	
@@ -354,6 +349,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         rightInteractionBox.visible = true;	
       }	
       interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible);
+      
+      mat4.rotateX(interactionBox.matrix, interactionBox.matrix, time/1000);
+      mat4.rotateY(interactionBox.matrix, interactionBox.matrix, time/1500);
+      leftInteractionBox.matrix = interactionBox.matrix;
+      rightInteractionBox.matrix = interactionBox.matrix;
     }
 
     // Called every time the XRSession requests that a new frame be drawn.
