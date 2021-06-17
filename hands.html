@@ -69,34 +69,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let radii = new Float32Array(25);
     let positions = new Float32Array(16*25);
     
-    let jointNames = [	
-      "wrist",	
-      "thumb-metacarpal",	
-      "thumb-phalanx-proximal",	
-      "thumb-phalanx-distal",	
-      "thumb-tip",	
-      "index-finger-metacarpal",	
-      "index-finger-phalanx-proximal",	
-      "index-finger-phalanx-intermediate",	
-      "index-finger-phalanx-distal",	
-      "index-finger-tip",	
-      "middle-finger-metacarpal",	
-      "middle-finger-phalanx-proximal",	
-      "middle-finger-phalanx-intermediate",	
-      "middle-finger-phalanx-distal",	
-      "middle-finger-tip",	
-      "ring-finger-metacarpal",	
-      "ring-finger-phalanx-proximal",	
-      "ring-finger-phalanx-intermediate",	
-      "ring-finger-phalanx-distal",	
-      "ring-finger-tip",	
-      "pinky-finger-metacarpal",	
-      "pinky-finger-phalanx-proximal",	
-      "pinky-finger-phalanx-intermediate",	
-      "pinky-finger-phalanx-distal",	
-      "pinky-finger-tip"	
-    ];
-    
     // Boxes
     let boxes_left = [];
     let boxes_right = [];
@@ -116,7 +88,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     scene.addNode(new Gltf2Node({ url: './media/gltf/space/space.gltf' }));
     scene.addNode(new SkyboxNode({ url: './media/textures/milky-way-4k.png' }));
 
-    function addBox(x, y, z, r, g, b, box_list, offset) {
+    function addBox(x, y, z, r, g, b, offset) {
       let boxBuilder = new BoxBuilder();
       boxBuilder.pushCube([0, 0, 0], 1.5 * 0.01);
       let boxPrimitive = boxBuilder.finishPrimitive(renderer);
@@ -127,12 +99,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       boxNode.addRenderPrimitive(boxRenderPrimitive);
       // Marks the node as one that needs to be checked when hit testing.
       boxNode.selectable = true;
-      box_list.push({
-        node: boxNode,
-        renderPrimitive: boxRenderPrimitive,
-        position: [x, y, z],
-        offset: offset
-      });
+      return boxNode;
     }
 
     function initHands() {
@@ -150,8 +117,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           const r = .6 + Math.random() * .4;
           const g = .6 + Math.random() * .4;
           const b = .6 + Math.random() * .4;
-          addBox(0, 0, 0, r, g, b, boxes_left, i);
-          addBox(0, 0, 0, r, g, b, boxes_right, i);
+          boxes_left.push(addBox(0, 0, 0, r, g, b));
+          boxes_right.push(addBox(0, 0, 0, r, g, b));
         }
       }
       if (indexFingerBoxes.left) {
@@ -160,8 +127,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       if (indexFingerBoxes.right) {
         scene.removeNode(indexFingerBoxes.right);
       }
-      indexFingerBoxes.left = addBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b, jointNames.indexOf('index-finger-tip'));
-      indexFingerBoxes.right = addBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b, jointNames.indexOf('index-finger-tip'));
+      indexFingerBoxes.left = addBox(leftBoxColor.r, leftBoxColor.g, leftBoxColor.b);
+      indexFingerBoxes.right = addBox(rightBoxColor.r, rightBoxColor.g, rightBoxColor.b);
     }
 
     // Checks to see if WebXR is available and, if so, queries a list of
@@ -319,9 +286,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           }
           for (const box of boxes[inputSource.handedness]) {
             scene.addNode(box.node);
-            let matrix = positions.slice(offset, offset + 16);
-            offset += 16;
-            let jointRadius = radii[box.offset];
+            let matrix = positions.slice(offset * 16, (offset + 1) * 16);
+            let jointRadius = radii[offset];
+            offset++;
             mat4.getTranslation(box.node.translation, matrix);
             mat4.getRotation(box.node.rotation, matrix);
             box.node.scale = [jointRadius, jointRadius, jointRadius];
