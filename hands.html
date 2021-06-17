@@ -108,10 +108,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
     function initHands() {
       for (const box of boxes_left) {
-        scene.removeNode(box.node);
+        scene.removeNode(box);
       }
       for (const box of boxes_right) {
-        scene.removeNode(box.node);
+        scene.removeNode(box);
       }
       boxes_left = [];
       boxes_right = [];
@@ -183,10 +183,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         // remove hand controller while blurred
         if(e.session.visibilityState === 'visible-blurred') {
           for (const box of boxes['left']) {
-            scene.removeNode(box.node);
+            scene.removeNode(box);
           }
           for (const box of boxes['right']) {
-            scene.removeNode(box.node);
+            scene.removeNode(box);
           }
         }
       });
@@ -272,7 +272,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           continue;
         } else {
           for (const box of boxes[inputSource.handedness]) {
-            scene.removeNode(box.node);
+            scene.removeNode(box);
           }
 
           let pose = frame.getPose(inputSource.targetRaySpace, refSpace);
@@ -289,25 +289,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             continue;
           }
           for (const box of boxes[inputSource.handedness]) {
-            scene.addNode(box.node);
+            scene.addNode(box);
             let matrix = positions.slice(offset * 16, (offset + 1) * 16);
             let jointRadius = radii[offset];
             offset++;
-            mat4.getTranslation(box.node.translation, matrix);
-            mat4.getRotation(box.node.rotation, matrix);
-            box.node.scale = [jointRadius, jointRadius, jointRadius];
+            mat4.getTranslation(box.translation, matrix);
+            mat4.getRotation(box.rotation, matrix);
+            box.scale = [jointRadius, jointRadius, jointRadius];
           }
           	
           // Render a special box for each index finger on each hand	
           const indexFingerBox = indexFingerBoxes[inputSource.handedness];	
-          scene.addNode(indexFingerBox.node);	
+          scene.addNode(indexFingerBox);	
           let joint = inputSource.hand.get('index-finger-tip');	
           let jointPose = frame.getJointPose(joint, xrRefSpace);	
           if (jointPose) {	
             let matrix = jointPose.transform.matrix;	
-            mat4.getTranslation(indexFingerBox.node.translation, matrix);	
-            mat4.getRotation(indexFingerBox.node.rotation, matrix);	
-            indexFingerBox.node.scale = [0.02, 0.02, 0.02];	
+            mat4.getTranslation(indexFingerBox.translation, matrix);	
+            mat4.getRotation(indexFingerBox.rotation, matrix);	
+            indexFingerBox.scale = [0.02, 0.02, 0.02];	
           }
         }
       }
@@ -342,9 +342,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       const interactionDistance = interactionBox.scale[0];	
       leftInteractionBox.visible = false;	
       rightInteractionBox.visible = false;	
-      if (Distance(indexFingerBoxes.left.node, interactionBox) < interactionDistance) {	
+      if (Distance(indexFingerBoxes.left, interactionBox) < interactionDistance) {	
         leftInteractionBox.visible = true;	
-      } else if (Distance(indexFingerBoxes.right.node, interactionBox) < interactionDistance) {	
+      } else if (Distance(indexFingerBoxes.right, interactionBox) < interactionDistance) {	
         rightInteractionBox.visible = true;	
       }	
       interactionBox.visible = !(leftInteractionBox.visible || rightInteractionBox.visible);
