@@ -90,7 +90,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     
     function createBoxPrimitive(r, g, b) {	
       let boxBuilder = new BoxBuilder();	
-      boxBuilder.pushCube([0, 0, 0], 1);	
+      boxBuilder.pushCube([0, 0, 0], 0.4);	
       let boxPrimitive = boxBuilder.finishPrimitive(renderer);	
       let boxMaterial = new PbrMaterial();	
       boxMaterial.baseColorFactor.value = [r, g, b, 1];	
@@ -304,16 +304,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
           let joint = inputSource.hand.get('index-finger-tip');	
           let jointPose = frame.getJointPose(joint, xrRefSpace);	
           if (jointPose) {	
-            let matrix = jointPose.transform.matrix;	
-            mat4.getTranslation(indexFingerBox.translation, matrix);	
-            mat4.getRotation(indexFingerBox.rotation, matrix);	
+            let matrix = jointPose.transform.matrix;
+            mat4.getTranslation(indexFingerBox.translation, matrix);
+            mat4.getRotation(indexFingerBox.rotation, matrix);
             indexFingerBox.scale = [0.02, 0.02, 0.02];	
           }
         }
       }
     }
     
-    function UpdateInteractables() {
+    function UpdateInteractables(time) {
       // Add scene objects if not present
       if (!interactionBox) {	
         // Add box to demonstrate hand interaction
@@ -330,7 +330,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
         scene.addNode(interactionBox);	
         scene.addNode(leftInteractionBox);	
         scene.addNode(rightInteractionBox);	
-      }	
+      }
+      
+      mat4.rotateX(interactionBox.matrix, interactionBox.matrix, time/1000);
+      mat4.rotateY(interactionBox.matrix, interactionBox.matrix, time/1500);
+      leftInteractionBox.matrix = interactionBox.matrix;
+      rightInteractionBox.matrix = interactionBox.matrix;
+      
       function Distance(nodeA, nodeB) {	
         return Math.sqrt(	
           Math.pow(nodeA.translation[0] - nodeB.translation[0], 2) +	
@@ -361,7 +367,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       session.requestAnimationFrame(onXRFrame);
 
       updateInputSources(session, frame, xrRefSpace);
-      UpdateInteractables();
+      UpdateInteractables(t);
 
       // Get the XRDevice pose relative to the Frame of Reference we created
       // earlier.
