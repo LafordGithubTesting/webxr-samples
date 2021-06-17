@@ -87,14 +87,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     let scene = new Scene();
     scene.addNode(new Gltf2Node({ url: './media/gltf/space/space.gltf' }));
     scene.addNode(new SkyboxNode({ url: './media/textures/milky-way-4k.png' }));
+    
+    function createBoxPrimitive(r, g, b) {	
+      let boxBuilder = new BoxBuilder();	
+      boxBuilder.pushCube([0, 0, 0], 1);	
+      let boxPrimitive = boxBuilder.finishPrimitive(renderer);	
+      let boxMaterial = new PbrMaterial();	
+      boxMaterial.baseColorFactor.value = [r, g, b, 1];	
+      return renderer.createRenderPrimitive(boxPrimitive, boxMaterial);	
+    }
 
     function addBox(x, y, z, r, g, b, offset) {
-      let boxBuilder = new BoxBuilder();
-      boxBuilder.pushCube([0, 0, 0], 1.5 * 0.01);
-      let boxPrimitive = boxBuilder.finishPrimitive(renderer);
-      let boxMaterial = new PbrMaterial();
-      boxMaterial.baseColorFactor.value = [r, g, b, 1];
-      let boxRenderPrimitive = renderer.createRenderPrimitive(boxPrimitive, boxMaterial);
+      let boxRenderPrimitive = createBoxPrimitive(r, g, b);
       let boxNode = new Node();
       boxNode.addRenderPrimitive(boxRenderPrimitive);
       // Marks the node as one that needs to be checked when hit testing.
