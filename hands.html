@@ -215,7 +215,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
       // this case an 'local' frame of reference means that all poses will
       // be relative to the location where the XRDevice was first detected.
       session.requestReferenceSpace('local').then((refSpace) => {
-        xrRefSpace = refSpace.getOffsetReferenceSpace(new XRRigidTransform({ x: 0, y: 1.5, z: 0 }));
+        xrRefSpace = refSpace.getOffsetReferenceSpace(new XRRigidTransform({ x: 0, y: 0, z: 0 }));
 
         // Inform the session that we're ready to begin drawing.
         session.requestAnimationFrame(onXRFrame);
